@@ -22,8 +22,8 @@ module.exports.getUserById = (req, res, next) => {
       return res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'InternalServerError') {
-        next(res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
+      if (err.name === 'CastError') {
+        next(res.status(BAD_REQUEST).send({ message: 'Такого пользователя не существует' }));
       } else {
         next(err);
       }

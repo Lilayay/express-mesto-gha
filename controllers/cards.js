@@ -53,14 +53,15 @@ module.exports.deleteCard = (req, res, next) => {
         .then(() => res.send({ data: card }));
     })
     .catch((err) => {
-      if (err.name === 'InternalServerError') {
-        next(res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
+      if (err.name === 'CastError') {
+        next(res.status(BAD_REQUEST).send({ message: 'Неверный идентификатор карточки' }));
       }
       else {
         next(err);
       }
     });
 };
+
 
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
@@ -75,14 +76,17 @@ module.exports.likeCard = (req, res, next) => {
       return res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'InternalServerError') {
+      if (err.name === 'CastError') {
+        next(res.status(BAD_REQUEST).send({ message: 'Неверный идентификатор карточки' }));
+      }
+      else if (err.name === 'InternalServerError') {
         next(res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
-      } else {
+      }
+      else {
         next(err);
       }
     });
 };
-
 
 module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
@@ -97,9 +101,13 @@ module.exports.dislikeCard = (req, res, next) => {
       return res.send(card);
     })
     .catch((err) => {
-      if (err.name === 'InternalServerError') {
+      if (err.name === 'CastError') {
+        next(res.status(BAD_REQUEST).send({ message: 'Неверный идентификатор карточки' }));
+      }
+      else if (err.name === 'InternalServerError') {
         next(res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
-      } else {
+      }
+      else {
         next(err);
       }
     });
