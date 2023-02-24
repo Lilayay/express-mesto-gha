@@ -6,16 +6,16 @@ const cors = require('cors');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
 
-const { NOT_FOUND } = require('./constants/errors.js');
+const { NOT_FOUND } = require('./constants/errors');
 
 const { PORT = 3000 } = process.env;
 const app = express();
 
 mongoose.set('strictQuery', true);
-mongoose.connect("mongodb://0.0.0.0:27017/mestodb", {
+mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useFindAndModify: false
+  useFindAndModify: false,
 })
   .then(() => {
     console.log('База данных подключена');
@@ -23,7 +23,7 @@ mongoose.connect("mongodb://0.0.0.0:27017/mestodb", {
   .catch((err) => {
     console.log('Ошибка при подключении базы данных');
     console.error(err);
-  });;
+  });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -31,7 +31,7 @@ app.use(cors());
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '63f758e4af9601702cc38c6b'
+    _id: '63f758e4af9601702cc38c6b',
   };
   next();
 });

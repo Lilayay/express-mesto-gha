@@ -12,8 +12,7 @@ module.exports.getCards = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'InternalServerError') {
         next(res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
-      }
-      else {
+      } else {
         next(err);
       }
     });
@@ -33,11 +32,9 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(res.status(BAD_REQUEST).send({ message: 'Ошибка при заполнении данных карточки' }));
-      }
-      else if (err.name === 'InternalServerError') {
+      } else if (err.name === 'InternalServerError') {
         next(res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
-      }
-      else {
+      } else {
         next(err);
       }
     });
@@ -55,13 +52,11 @@ module.exports.deleteCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(res.status(BAD_REQUEST).send({ message: 'Неверный идентификатор карточки' }));
-      }
-      else {
+      } else {
         next(err);
       }
     });
 };
-
 
 module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(
@@ -78,11 +73,9 @@ module.exports.likeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(res.status(BAD_REQUEST).send({ message: 'Неверный идентификатор карточки' }));
-      }
-      else if (err.name === 'InternalServerError') {
+      } else if (err.name === 'InternalServerError') {
         next(res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
-      }
-      else {
+      } else {
         next(err);
       }
     });
@@ -103,11 +96,9 @@ module.exports.dislikeCard = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(res.status(BAD_REQUEST).send({ message: 'Неверный идентификатор карточки' }));
-      }
-      else if (err.name === 'InternalServerError') {
+      } else if (err.name === 'InternalServerError') {
         next(res.status(INTERNAL_SERVER_ERROR).send({ message: 'На сервере произошла ошибка' }));
-      }
-      else {
+      } else {
         next(err);
       }
     });
