@@ -50,7 +50,7 @@ module.exports.createUser = (req, res, next) => {
       about: user.about,
       avatar: user.avatar,
       _id: user._id,
-    }),)
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(
@@ -75,13 +75,13 @@ module.exports.updateUser = (req, res, next) => {
   User.findByIdAndUpdate(
     req.user._id,
     { name, about },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   )
     .then((user) => {
       if (!user) {
         return res
           .status(NOT_FOUND)
-          .send({ message: 'Такого пользователя не существует' },);
+          .send({ message: 'Такого пользователя не существует' });
       }
       return res.send({ data: user });
     })
