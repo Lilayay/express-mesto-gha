@@ -49,6 +49,7 @@ module.exports.deleteCard = (req, res, next) => {
       return card.remove()
         .then(() => res.send({ data: card }));
     })
+    .then((cards) => res.send({ data: cards }))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(res.status(BAD_REQUEST).send({ message: 'Неверный идентификатор карточки' }));
