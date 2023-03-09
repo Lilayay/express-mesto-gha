@@ -61,8 +61,6 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       if (err.statusCode === 400) {
         throw new BadRequestError('Ошибка при заполнении данных пользователя');
-      } else if (err.statusCode === 500) {
-        throw new InternalServerError('На сервере произошла ошибка');
       } else {
         next(err);
       }
