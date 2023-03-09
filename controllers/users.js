@@ -120,13 +120,9 @@ module.exports.login = (req, res, next) => {
       res.status(200).send({ _id: token, message: 'Регистрация прошла успешно' });
     })
     .catch((err) => {
-      if (err.statusCode === 401) {
-        throw new UnautorizedError('Такого пользователя не существует');
-      } else if (err.statusCode === 500) {
-        throw new InternalServerError('На сервере произошла ошибка');
-      } else {
-        next(err);
-      }
+      res
+        .status(401)
+        .send({ message: err.message });
     });
 };
 
@@ -134,7 +130,7 @@ module.exports.getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (!user) {
-        throw next(new NotFoundError('Такого пользователя не существует'));
+        throw new NotFoundError('Такого пользователя не существует');
       }
       return res.send({ data: user });
     })
