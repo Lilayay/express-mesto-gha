@@ -6,7 +6,6 @@ const ForbiddenError = require('../errors/ForbiddenError');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
-    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточки не найдены');
