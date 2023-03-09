@@ -126,19 +126,8 @@ module.exports.login = (req, res) => {
 };
 
 module.exports.getUserInfo = (req, res, next) => {
-  const userId = req.user._id;
-  User.findById(userId)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь по указанному _id не найден');
-    })
-    .then((user) => {
-      res.send(user);
-    })
-    .catch((err) => {
-      if (err.statusCode === 400) {
-        next(new BadRequestError('Запрашиваемый пользователь не найден'));
-      } else {
-        next(err);
-      }
-    });
+  User.findById(req.user._id)
+    .orFail(() => new NotFoundError('Пользователь не найден'))
+    .then((user) => res.send(user))
+    .catch(next);
 };
