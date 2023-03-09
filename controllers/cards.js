@@ -48,16 +48,17 @@ module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        throw next(new NotFoundError('Такой карточки не существует'));
-      } if (card.owner.valueOf() !== owner) {
-        throw next(new ForbiddenError('id карточки некорректный'));
+        throw new NotFoundError('Такой карточки не существует');
+      }
+      if (card.owner.valueOf() !== owner) {
+        throw new ForbiddenError('Не достаточно прав для удаления');
       }
       return card.remove()
         .then(() => res.send({ data: card }));
     })
     .catch((err) => {
-      if (err.statusCode === 404) {
-        throw next(new NotFoundError('id карточки некорректный'));
+      if (err.statusCode === 400) {
+        throw new BadRequestError('id карточки некорректный');
       } else {
         next(err);
       }
