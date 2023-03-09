@@ -51,6 +51,8 @@ app.post('/signin', celebrate({
 app.use('/', auth, usersRouter);
 app.use('/', auth, cardsRouter);
 
+app.use(errors());
+
 app.use((req, res) => {
   res.status(404).send({ message: 'Страница не найдена' });
 });
@@ -63,7 +65,5 @@ app.use((err, req, res, next) => {
   }
   next();
 });
-
-app.use(errors());
 
 app.listen(PORT);
