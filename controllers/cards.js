@@ -57,8 +57,8 @@ module.exports.deleteCard = (req, res, next) => {
         .then(() => res.send({ data: card }));
     })
     .catch((err) => {
-      if (err.statusCode === 404) {
-        throw new NotFoundError('id карточки некорректный');
+      if (err.statusCode === 400) {
+        throw new BadRequestError('id карточки некорректный');
       } else {
         next(err);
       }
