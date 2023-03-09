@@ -127,17 +127,6 @@ module.exports.login = (req, res) => {
 
 module.exports.getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Такого пользователя не существует');
-      }
-      res.status(200).send(user);
-    })
-    .catch((err) => {
-      if (err.statusCode === 400) {
-        next(BadRequestError('Переданы некорректные данные'));
-      } else if (err.statusCode === 404) {
-        next(new NotFoundError('Пользователь не найден'));
-      } else next(err);
-    });
+    .then((user) => res.send(user))
+    .catch(next);
 };
