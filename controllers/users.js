@@ -131,7 +131,7 @@ module.exports.getUserInfo = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Такого пользователя не существует');
       }
-      return res.send({ data: user });
+      return res.send({ user });
     })
     .catch((err) => {
       next(err);
