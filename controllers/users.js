@@ -131,13 +131,11 @@ module.exports.getUserInfo = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Такого пользователя не существует');
       }
-      res.status(200).send(user);
+      else {
+        res.send({ data: user });
+      }
     })
-    .catch((err) => {
-      if (err.statusCode === 400) {
-        next(BadRequestError('Переданы некорректные данные'));
-      } else if (err.statusCode === 404) {
-        next(new NotFoundError('Пользователь не найден'));
-      } else next(err);
+    .catch(() => {
+      next();
     });
 };
