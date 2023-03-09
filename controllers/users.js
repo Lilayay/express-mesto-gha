@@ -1,10 +1,10 @@
 const bcrypt = require('bcrypt');
-const User = require('../models/user');
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
-const InternalServerError = require('../errors/InternalServerError.js');
+const InternalServerError = require('../errors/InternalServerError');
 const ConflictError = require('../errors/ConflictError');
 const UnautorizedError = require('../errors/UnautorizedError');
 
@@ -38,7 +38,9 @@ module.exports.getUserById = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password
+  } = req.body;
   User.findOne({ email })
     .then((user) => {
       if (user) {
@@ -46,7 +48,9 @@ module.exports.createUser = (req, res, next) => {
       }
       return bcrypt.hash(password, 10);
     })
-    .then(hash => User.create({ name, about, avatar, email, password: hash }))
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash
+    }))
     .then((user) => res.send({
       name: user.name,
       about: user.about,
@@ -91,11 +95,7 @@ module.exports.updateUser = (req, res, next) => {
 
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(
-    req.user._id,
-    { avatar },
-    { new: true, runValidators: true },
-  )
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true },)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Такого пользователя не существует');
@@ -113,7 +113,7 @@ module.exports.updateAvatar = (req, res, next) => {
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
