@@ -44,13 +44,13 @@ module.exports.createCard = (req, res, next) => {
 };
 
 module.exports.deleteCard = (req, res, next) => {
-  const user = req.user._id;
+  const owner = req.user._id;
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Такой карточки не существует');
       }
-      if (card.owner.valueOf() !== user) {
+      if (card.owner.valueOf() !== owner) {
         throw new ForbiddenError('Не достаточно прав для удаления');
       }
       return card.remove()
