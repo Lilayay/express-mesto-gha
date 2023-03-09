@@ -126,16 +126,21 @@ module.exports.login = (req, res) => {
 };
 
 module.exports.getUserInfo = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Такого пользователя не существует');
-      }
-      else {
-        res.send({ data: user });
-      }
+  const { _id } = req.user;
+  User.findById(_id)
+    .orFail(() => {
+      throw new NotFoundError(`Пользователь c id: ${_id} не найден`);
     })
-    .catch(() => {
-      next();
+    .then((user) => {
+      res.send({ data: user });
+    })
+    .catch((err) => {
+      if (err.statusCode === 400) {
+        next(new BadRequestError('Передан некорректный id пользователя'));
+      } else if (err.statusCode === 404) {
+        next(new NotFoundError(`Пользователь c id: ${_id} не найден`));
+      } else {
+        next(err);
+      }
     });
 };
