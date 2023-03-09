@@ -39,7 +39,7 @@ module.exports.getUserById = (req, res, next) => {
 
 module.exports.createUser = (req, res, next) => {
   const {
-    name, about, avatar, email, password
+    name, about, avatar, email, password,
   } = req.body;
   User.findOne({ email })
     .then((user) => {
@@ -49,7 +49,7 @@ module.exports.createUser = (req, res, next) => {
       return bcrypt.hash(password, 10);
     })
     .then((hash) => User.create({
-      name, about, avatar, email, password: hash
+      name, about, avatar, email, password: hash,
     }))
     .then((user) => res.send({
       name: user.name,
@@ -95,7 +95,7 @@ module.exports.updateUser = (req, res, next) => {
 
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true },)
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Такого пользователя не существует');
@@ -118,8 +118,7 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id }, '5cdd183194489560b0e6bfaf8a81541e', { expiresIn: '7d' });
+      const token = jwt.sign({ _id: user._id }, '5cdd183194489560b0e6bfaf8a81541e', { expiresIn: '7d' });
       res.status(200).send({ _id: token, message: 'Регистрация прошла успешно' });
     })
     .catch((err) => {
