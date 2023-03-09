@@ -6,7 +6,6 @@ const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const InternalServerError = require('../errors/InternalServerError');
 const ConflictError = require('../errors/ConflictError');
-const UnautorizedError = require('../errors/UnautorizedError');
 
 module.exports.getUser = (req, res, next) => {
   User.find({})
@@ -111,7 +110,7 @@ module.exports.updateAvatar = (req, res, next) => {
     });
 };
 
-module.exports.login = (req, res, next) => {
+module.exports.login = (req, res) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
