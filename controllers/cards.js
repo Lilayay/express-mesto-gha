@@ -50,7 +50,7 @@ module.exports.deleteCard = (req, res, next) => {
       if (!card) {
         throw next(new NotFoundError('Такой карточки не существует'));
       } if (card.owner.valueOf() !== owner) {
-        throw next(new OwnerError('id карточки некорректный'));
+        throw next(new ForbiddenError('id карточки некорректный'));
       }
       return card.remove()
         .then(() => res.send({ data: card }));
