@@ -101,7 +101,7 @@ module.exports.updateAvatar = (req, res, next) => {
     });
 };
 
-module.exports.login = (req, res) => {
+module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
@@ -126,10 +126,10 @@ module.exports.getUserInfo = (req, res, next) => {
       }
       return res.status(200).send({ data: user });
     })
-    .catch((error) => {
+    .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Некорректный id'));
       }
-      return next(error);
+      return next(err);
     });
 };
