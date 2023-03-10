@@ -4,18 +4,13 @@ const User = require('../models/user');
 
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
-const InternalServerError = require('../errors/InternalServerError');
 const ConflictError = require('../errors/ConflictError');
 
 module.exports.getUser = (req, res, next) => {
   User.find({})
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.statusCode === 500) {
-        throw new InternalServerError('На сервере произошла ошибка');
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 
@@ -28,8 +23,8 @@ module.exports.getUserById = (req, res, next) => {
       return res.send({ data: user });
     })
     .catch((err) => {
-      if (err.statusCode === 400) {
-        throw new BadRequestError('id пользователя некорректный');
+      if (err.name === 'CastError') {
+        next(new BadRequestError('id пользователя некорректный'));
       } else {
         next(err);
       }
@@ -58,8 +53,8 @@ module.exports.createUser = (req, res, next) => {
       email: user.email,
     }))
     .catch((err) => {
-      if (err.statusCode === 400) {
-        throw new BadRequestError('Ошибка при заполнении данных пользователя');
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Ошибка при заполнении данных пользователя'));
       } else {
         next(err);
       }
@@ -80,10 +75,8 @@ module.exports.updateUser = (req, res, next) => {
       return res.send({ data: user });
     })
     .catch((err) => {
-      if (err.statusCode === 400) {
-        throw new BadRequestError('Ошибка при заполнении данных пользователя');
-      } else if (err.statusCode === 500) {
-        throw new InternalServerError('На сервере произошла ошибка');
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Ошибка при заполнении данных пользователя'));
       } else {
         next(err);
       }
@@ -100,10 +93,8 @@ module.exports.updateAvatar = (req, res, next) => {
       return res.send({ data: user });
     })
     .catch((err) => {
-      if (err.statusCode === 400) {
-        throw new BadRequestError('Ошибка при заполнении данных пользователя');
-      } else if (err.statusCode === 500) {
-        throw new InternalServerError('На сервере произошла ошибка');
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Некорректные данные для смены аватара'));
       } else {
         next(err);
       }
@@ -119,9 +110,11 @@ module.exports.login = (req, res) => {
       res.status(200).send({ _id: token, message: 'Регистрация прошла успешно' });
     })
     .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Ошибка при заполнении данных для регистрации'));
+      } else {
+        next(err);
+      }
     });
 };
 
@@ -134,7 +127,7 @@ module.exports.getUserInfo = (req, res, next) => {
       return res.status(200).send({ data: user });
     })
     .catch((error) => {
-      if (error.statusCode === 400) {
+      if (err.name === 'CastError') {
         return next(new BadRequestError('Некорректный id'));
       }
       return next(error);

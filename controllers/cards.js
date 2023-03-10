@@ -1,23 +1,15 @@
 const Card = require('../models/card');
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
-const InternalServerError = require('../errors/InternalServerError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((card) => {
-      if (!card) {
-        throw new NotFoundError('Карточки не найдены');
-      }
       return res.send(card);
     })
     .catch((err) => {
-      if (err.statusCode === 500) {
-        throw new InternalServerError('На сервере произошла ошибка');
-      } else {
-        next(err);
-      }
+      next(err);
     });
 };
 
@@ -33,10 +25,8 @@ module.exports.createCard = (req, res, next) => {
       _id: card._id,
     }))
     .catch((err) => {
-      if (err.statusCode === 400) {
-        throw new BadRequestError('Ошибка при заполнении данных карточки');
-      } else if (err.statusCode === 500) {
-        throw new InternalServerError('На сервере произошла ошибка');
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError('Ошибка при заполнении данных карточки'));
       } else {
         next(err);
       }
@@ -55,7 +45,13 @@ module.exports.deleteCard = (req, res, next) => {
       }
       return card.remove().then(() => res.send({ message: 'Карточка удалена' }));
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Некорректный id карточки'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.likeCard = (req, res, next) => {
@@ -71,10 +67,8 @@ module.exports.likeCard = (req, res, next) => {
       return res.send(card);
     })
     .catch((err) => {
-      if (err.statusCode === 400) {
-        throw new BadRequestError('id карточки некорректный');
-      } else if (err.statusCode === 500) {
-        throw new InternalServerError('На сервере произошла ошибка');
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Некорректный id карточки'));
       } else {
         next(err);
       }
@@ -94,10 +88,8 @@ module.exports.dislikeCard = (req, res, next) => {
       return res.send(card);
     })
     .catch((err) => {
-      if (err.statusCode === 400) {
-        throw new BadRequestError('id карточки некорректный');
-      } else if (err.statusCode === 500) {
-        throw new InternalServerError('На сервере произошла ошибка');
+      if (err.name === 'CastError') {
+        next(new BadRequestError('Некорректный id карточки'));
       } else {
         next(err);
       }

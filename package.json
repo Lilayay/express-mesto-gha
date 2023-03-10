@@ -20,11 +20,9 @@
   "homepage": "https://github.com/Lilayay/express-mesto-gha#readme",
   "dependencies": {
     "bcrypt": "^5.1.0",
-    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "celebrate": "^15.0.1",
     "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^4.4.18",
