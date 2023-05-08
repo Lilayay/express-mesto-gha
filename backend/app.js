@@ -10,16 +10,14 @@ const cardsRouter = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
 
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
 const { PORT = 3000 } = process.env;
 const app = express();
 
 mongoose.set('strictQuery', true);
 mongoose
-  .connect('mongodb://0.0.0.0:27017/mestodb', {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useFindAndModify: false,
-  })
+  .connect('mongodb://0.0.0.0:27017/mestodb')
   .then(() => {
     console.log('База данных подключена');
   })
@@ -31,6 +29,14 @@ mongoose
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
+
+app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -51,6 +57,8 @@ app.post('/signin', celebrate({
 
 app.use('/', auth, usersRouter);
 app.use('/', auth, cardsRouter);
+
+app.use(errorLogger);
 
 app.use(errors());
 
